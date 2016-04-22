@@ -192,7 +192,7 @@
           var projection = d3.geo.mercator();
           var path = d3.geo.path().projection(projection);
 
-          var Scale = d3.scale.linear().domain([3,9019520]).range([2, 120]);
+          var Scale = d3.scale.linear().domain([3,9019520]).range([2.5, 120]);
           var format = d3.format("0,000");
           d3.select("#world").text(format(Number(countryData[countryData.length-1][yearData])));
           /*for (var i=0; i < countryData.length-1; i++){
@@ -278,9 +278,19 @@
              .attr("r",function (d){ return Scale(data[yearData]);})
              .style("stroke","#00e6ac")
              .style("fill","none")
-             .style("opacity","0.5")
+             .style("opacity","0.4");
+             
+
+             svg.append("circle")
+            //.attr("id","c"+i)
+             .attr("cx", coords[0])
+             .attr("cy", coords[1])
+             .attr("r",function (d){ return Scale(data[yearData])-0.45;})
+             //.style("stroke","#00e6ac")
+             .style("fill","#00e6ac")
+             .style("opacity","0")
              .on("mouseover", function (d) {
-              d3.select(this).style("fill","#00e6ac");
+              d3.select(this).style("opacity","0.4");
               d3.select("#country").text(data.CountryName);
               d3.select("#total").text(format(data[yearData]));
               d3.select("#percentage").text( function (){return d3.format(".3%")(data[yearData]/countryData[countryData.length-1][yearData]);});
@@ -290,7 +300,7 @@
 
               })
              .on("mouseout", function (d) {
-              d3.select(this).style("fill","none");
+              d3.select(this).style("opacity","0");
               d3.select("#select").remove();
               });
 
@@ -302,7 +312,7 @@
       });
 //red #ec3255
  }
- displayCircle(2011);
+ displayCircle(2000);
 
 		</script>
 
