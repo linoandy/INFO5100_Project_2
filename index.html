@@ -1,0 +1,263 @@
+<html>
+<head>
+<title>INFO 5100 Project 2</title> 
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+
+<style>body { font-family: "Open Sans"; background-color: #2a2f3b; text-align:center} 
+  div { margin: 30px; }
+	.axis path { fill:none; stroke: #555f77; stroke-width:2px;}
+	.axis line{ stroke: #555f77;}
+	.axis {font-size: .75em;}
+	.axis text{ fill: #aaa; font-size: .7em;}
+</style>
+</head>
+
+<body >
+  <div>
+    <span style = "font-size:2em; font-weight:100; font-family: 'PT Serif', serif; margin-top:0px; margin-bottom:0px;
+            text-align: left;color:#00e6ac; opacity:0.7;">CO2 Emissions</span>
+  </div>
+  
+	<div id = "map"></div>
+
+		<script>
+    //Use the notes from class to create the map
+		  var width = 960,
+          height = 500;
+
+      var projection = d3.geo.mercator();
+      var path = d3.geo.path().projection(projection);
+	
+      var svg = d3.select("#map")
+                  .append("svg")
+                  .attr("width", width)
+                  .attr("height", height)
+                  .style("padding-top",30)
+                  .style("padding-left",50)
+                  .style("padding-right",50);
+
+      var svgLineWidth= 300;
+      var svgLineHeight = 160;
+      var padding = 20;
+      var svgLine = svg.append ("svg")
+                      .attr("x",-30)
+                      .attr("y",330)
+                      .attr("width", svgLineWidth)
+                      .attr("height", svgLineHeight)
+                      //.style("padding",20);
+
+      var xScale = d3.scale.linear().domain([1963,2012]).range([padding,svgLineWidth-padding ]);
+
+                   //Making the scale of the graph's y axis
+      var yScale = d3.scale.linear().domain([0, 34483]).range([svgLineHeight-padding, padding]);
+
+                   //Creating the X & Y axis based on scale
+      var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+      //.ticks(10).tickFormat(d3.format("d"));
+      var yAxis = d3.svg.axis().scale(yScale).orient("left");
+      svgLine.append("g").attr("class", "axis")
+      .attr("transform", "translate(0,0)")
+          .call(yAxis);
+      svgLine.append("g").attr("class", "axis")
+          .attr("transform", "translate(0,140)")
+            .call(xAxis);
+                      
+
+      var g = svg.append("g");
+      var worldObjects;
+      var countryData;
+
+
+
+      d3.json("world-50m.json", function(error, world) {
+	       worldObjects = world;
+	       if(error){console.log(error);}
+
+	    var countries = topojson.feature(world, world.objects.countries)
+        .features;
+	    countries.forEach(function (country){
+		     g.append("path")
+          .attr("d", path(country))
+		      .style("fill","#191e28")
+		      .style("stroke","#2a2f3b");
+	    });
+
+	   });
+
+      svg.append("text")
+      .text("WORLD CO2 EMISSION ")
+      .attr("x",-30)
+      .attr("y",100)
+      .style("font-size", "13px")
+      .style("fill","#555f77")
+      //.style("font-family","Arial Narrow")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .attr("id","world")
+      .text("- -")
+      .attr("x",-30)
+      .attr("y",115)
+      .style("font-size", "13px")
+      .style("fill","#c3c9d5")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .text("COUNTRY ")
+      .attr("x",-30)
+      .attr("y",140)
+      .style("font-size", "13px")
+      .style("fill","#555f77")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .attr("id","country")
+      .text("- -")
+      .attr("x",-30)
+      .attr("y",155)
+      .style("font-size", "13px")
+      .style("fill","#c3c9d5")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .text("TOTAL EMISSIONS Kt. ")
+      .attr("x",-30)
+      .attr("y",180)
+      .style("font-size", "13px")
+      .style("fill","#555f77")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .attr("id","total")
+      .text("- -")
+      .attr("x",-30)
+      .attr("y",195)
+      .style("font-size", "13px")
+      .style("fill","#c3c9d5")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .text("PERCENTAGE OF WORLD EMISSIONS")
+      .attr("x",-30)
+      .attr("y",220)
+      .style("font-size", "13px")
+      .style("fill","#555f77")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .attr("id","percentage")
+      .text("- -")
+      .attr("x",-30)
+      .attr("y",235)
+      .style("font-size", "13px")
+      .style("fill","#c3c9d5")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .text("METRIC TONS PER CAPITA")
+      .attr("x",-30)
+      .attr("y",260)
+      .style("font-size", "13px")
+      .style("fill","#555f77")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+      svg.append("text")
+      .attr("id","capita")
+      .text("- -")
+      .attr("x",-30)
+      .attr("y",275)
+      .style("font-size", "13px")
+      .style("fill","#c3c9d5")
+      .style("font-family","Impact")
+      .style("font-weight","bold");
+
+function displayCircle(year){
+ d3.json("co2Data.json", function (error, data){
+          if (error){console.log(error);}
+          countryData = data;
+          var yearData= String("y"+year);
+          var capitaData = String("p"+year);
+          var projection = d3.geo.mercator();
+          var path = d3.geo.path().projection(projection);
+
+          var Scale = d3.scale.linear().domain([3,9019520]).range([2, 120]);
+          var format = d3.format("0,000");
+          d3.select("#world").text(format(Number(countryData[countryData.length-1][yearData])));
+          /*for (var i=0; i < countryData.length-1; i++){
+
+           if (countryData[i][year]!=0){
+            var longitude = countryData[i].Longitude;
+            var latitude = countryData[i].Latitude;
+            var coords = projection([longitude,latitude]);
+            svg.append("circle")
+            //.attr("id","c"+i)
+             .attr("cx", coords[0])
+             .attr("cy", coords[1])
+             .attr("r",function (d){ return Scale(countryData[i][year]);})
+             .style("stroke","#00e6ac")
+             .style("fill","none")
+             .style("opacity","0.5")
+             .on("mouseover", function (d) {
+              d3.select(this).style("fill","#00e6ac");
+              d3.select("#country").text(countryData[i].CountryName);
+
+              })
+             .on("mouseout", function (d) {
+              d3.select(this).style("fill","none");
+              });
+
+            }
+          }*/
+          countryData.forEach(function (data){
+            if (data[yearData]!=0 && data.CountryName!="World"){
+            var longitude = data.Longitude;
+            var latitude = data.Latitude;
+            var coords = projection([longitude,latitude]);
+            svg.append("circle")
+            //.attr("id","c"+i)
+             .attr("cx", coords[0])
+             .attr("cy", coords[1])
+             .attr("r",function (d){ return Scale(data[yearData]);})
+             .style("stroke","#00e6ac")
+             .style("fill","none")
+             .style("opacity","0.5")
+             .on("mouseover", function (d) {
+              d3.select(this).style("fill","#00e6ac");
+              d3.select("#country").text(data.CountryName);
+              d3.select("#total").text(format(data[yearData]));
+              d3.select("#percentage").text( function (){return d3.format(".3%")(data[yearData]/countryData[countryData.length-1][yearData]);});
+              d3.select("#capita").text(format(d3.format(".3f")(data[capitaData])));
+              
+
+              })
+             .on("mouseout", function (d) {
+              d3.select(this).style("fill","none");
+              });
+
+            }
+          });
+          
+
+        
+      });
+//red #ec3255
+ }
+ displayCircle(2011);
+
+		</script>
+
+<body>
+</html>
+
+
+
