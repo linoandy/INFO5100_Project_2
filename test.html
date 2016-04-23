@@ -171,6 +171,7 @@
 				arcs.append("path")
 				    .attr("fill", function(d, i) {
 				    	return color(i);
+				    	// return colorScale(Math.log(piechartData[i]));
 				    })
 				    .attr("d", arc);
 				
@@ -186,7 +187,7 @@
 				});
 			};
 
-			pieChart(2014)	
+			pieChart(1960)	
 			// var slider = document.getElementById("slider");
 			// console.log(slider.value);
 			// slider.onchange = function () {
