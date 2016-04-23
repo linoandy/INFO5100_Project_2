@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Rui Liang</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="http://d3js.org/topojson.v1.min.js"></script>
+		<style type="text/css">
+
+			text {
+				font-family: sans-serif;
+				font-size: 12px;
+				fill: white;
+			}
+
+		</style>
+	</head>
+	<body>
+		<input id="slider" type="range" min="0" max="100" value="30"/>
+		<form>
+		  <label><input type="radio" name="dataset" value="2000" checked> 2000</label>
+		  <label><input type="radio" name="dataset" value="2005"> 2005</label>
+		</form>
+		
+
+		<p>
+			<div id="problem4">
+				<script>
+
+				</script>
+			</div>
+		</p>
+
+		<script type="text/javascript">
+			var slider = document.getElementById("slider");
+			slider.oninput = function () {
+				var circle = document.getElementById("c1");
+				circle.setAttribute("r",slider.value);
+				circle.style.stroke = "#f00"
+				circle.style.fill = "#ccc"
+			};
+			//Width and height
+			var pieChart = function(year) {
+				
+
+				var w = 300;
+				var h = 300;
+
+				d3.json("co2_gdpData.json", function (error, data) {
+					if (error){console.log(error);}
+
+					var countryData = data;
+					var yearData = "y" + String(year);
+          			var gdpData = "g" + String(year);
+          			console.log(gdpData);
+          			var piechartData = [];
+          			var mapData = [];
+
+          			countryData.forEach(function (data) {
+			           	var yearData = String("y"+year);
+			            if(data[year]!=0) {
+			            	piechartData.push(data[gdpData]);
+			            	mapData.push({country: data.CountryName, id: data.CountryID, gdp: data[gdpData]})
+			            };
+			        });
+          			console.log(piechartData, piechartData.length);
+          		
+          		//sort mapData by gdp, code from http://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-objects
+				var sort_by = function(field, reverse, primer){
+
+				   var key = primer ? 
+				       function(x) {return primer(x[field])} : 
+				       function(x) {return x[field]};
+
+				   reverse = !reverse ? 1 : -1;
+
+				   return function (a, b) {
+				       return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+				     } 
+				}
+
+				mapData.sort(sort_by("gdp", false, parseInt));
+				console.log(mapData);		
+
+				// calculate the 20, 40, 60, 80 percentile, code from http://stackoverflow.com/questions/31572725/calculate-quintiles-deciles-from-an-array-of-numbers
+				var len =  mapData.length;
+				var per20 =  Math.floor(len*.2) - 1;
+				var per40 =  Math.floor(len*.4) - 1;
+				var per60 =  Math.floor(len*.6) - 1;
+				var per80 =  Math.floor(len*.8) - 1;
+
+				mapData.forEach(function (data) {
+					mapData.color = function() {
+						var colorchoice = ["#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c"];
+						return color[Math.floor(Math.random()*5)];
+					}
+
+				})
+				
+
+				var svgwidth = 960;
+				var svgheight = 480;
+				var svgpadding = 25;
+				var outputofP4 = d3.select("#problem4").append("svg").attr("width", svgwidth).attr("height", svgheight);
+
+				var projection = d3.geo.equirectangular();
+				var path = d3.geo.path().projection(projection);
+		
+
+				var g = outputofP4.append("g");
+				var worldObjects;
+
+				d3.json("world-50m.json", function(error, world) {
+					worldObjects = world;
+					if (error) { console.log(error);}
+					var countries = topojson.feature(world, world.objects.countries).features;
+
+					countries.forEach(function (country) {
+							
+						g.append("path").attr("d", path(country)).style("fill", function(){
+								// var i = 0;
+								// console.log(country.id, "mapData id = ", mapData[i].id)
+								// while (country.id != mapData[i].id) {
+								// 	if (mapData[i].id == country.id) {
+								// 		return mapData[i].color
+								// 	} else {
+								// 		i++
+								// 	}
+									
+								// };
+								// return mapData[i].color;
+								var color = ["#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c"];
+								return color[Math.floor(Math.random()*5)];
+							}
+							
+						).style("stroke", "#888");
+						
+					});
+
+				});
+
+				var outerRadius = w / 2;
+				var innerRadius = 0;
+				var arc = d3.svg.arc()
+								.innerRadius(innerRadius)
+								.outerRadius(outerRadius);
+				
+				var pie = d3.layout.pie();
+				
+				//Easy colors accessible via a 10-step ordinal scale
+				var color = d3.scale.category10();
+
+				//Create SVG element
+				var svg = d3.select("#problem4")
+							.append("svg")
+							.attr("width", w)
+							.attr("height", h);
+				
+				//Set up groups
+				var arcs = svg.selectAll("g.arc")
+							  .data(pie(piechartData))
+							  .enter()
+							  .append("g")
+							  .attr("class", "arc")
+							  .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+				
+				//Draw arc paths
+				arcs.append("path")
+				    .attr("fill", function(d, i) {
+				    	return color(i);
+				    })
+				    .attr("d", arc);
+				
+				//Labels
+				// arcs.append("text")
+				//     .attr("transform", function(d) {
+				//     	return "translate(" + arc.centroid(d) + ")";
+				//     })
+				//     .attr("text-anchor", "middle")
+				//     .text(function(d) {
+				//     	return d.value;
+				//     });
+				});
+			};
+
+			pieChart(2014)		
+		</script>
+	</body>
+</html>
