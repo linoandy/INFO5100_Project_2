@@ -6,10 +6,10 @@
 
 <style>body { font-family: "Open Sans"; background-color: #2a2f3b; text-align:center} 
   div { margin: 30px; }
-	.axis path { fill:none; stroke: #aaa; stroke-width:1px;}
-	.axis line{ stroke: #aaa;}
+	.axis path { fill:none; stroke: #3f475a; stroke-width:1px;}
+	.axis line{ stroke: #3f475a;}
 	.axis {font-size: .75em;}
-	.axis text{ fill: #aaa; font-size: .7em;}
+	.axis text{ fill: #3f475a; font-size: .7em;}
 </style>
 </head>
 
@@ -34,7 +34,8 @@
                   .attr("width", width)
                   .attr("height", height)
                   //.style("background-color","white")
-                  .style("padding-top",30)
+                  .style("padding-top",50)
+                  .style("padding-bottom",55)
                   .style("padding-left",50)
                   .style("padding-right",50);
                   //.style("padding-bottom",50);
@@ -54,6 +55,8 @@
                       .attr("width", svgHoverWidth)
                       .attr("height", svgHoverHeight);
                       //.style("padding",20);
+      if(x>500) svgHover.attr("x", x-svgHoverWidth-r);
+      if(y>250) svgHover.attr("y", y-svgHoverHeight-5);
       svgHover.append("rect")
              .attr("x", 0)
              .attr("y", 0)
@@ -122,7 +125,8 @@
            .y(function (d) {return yScale(d[1])});
            svgLine.append("path")
            .attr("d",countryLine(arr))
-           .attr("stroke","#c3c9d5")
+           .attr("stroke","white")
+           //.attr("stroke","#c3c9d5")
            .style("strke-width","1")
            .attr("fill","none")
            ;
@@ -157,7 +161,7 @@
       .attr("x",8)
       .attr("y",20)
       .style("font-size", "13px")
-      .style("fill","#555f77")
+      .style("fill","#4a5368")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -167,7 +171,8 @@
       .attr("x",8)
       .attr("y",35)
       .style("font-size", "13px")
-      .style("fill","#c3c9d5")
+      .style("fill","white")
+      //.style("fill","#c3c9d5")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -176,7 +181,7 @@
       .attr("x",8)
       .attr("y",60)
       .style("font-size", "13px")
-      .style("fill","#555f77")
+      .style("fill","#4a5368")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -186,7 +191,8 @@
       .attr("x",8)
       .attr("y",75)
       .style("font-size", "13px")
-      .style("fill","#c3c9d5")
+      .style("fill","white")
+      //.style("fill","#c3c9d5")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -195,7 +201,7 @@
       .attr("x",8)
       .attr("y",100)
       .style("font-size", "13px")
-      .style("fill","#555f77")
+      .style("fill","#4a5368")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -205,7 +211,8 @@
       .attr("x",8)
       .attr("y",115)
       .style("font-size", "13px")
-      .style("fill","#c3c9d5")
+      .style("fill","white")
+      //.style("fill","#c3c9d5")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -214,7 +221,7 @@
       .attr("x",8)
       .attr("y",140)
       .style("font-size", "13px")
-      .style("fill","#555f77")
+      .style("fill","#4a5368")
       .style("font-family","Impact")
       .style("font-weight","bold");
 
@@ -224,7 +231,8 @@
       .attr("x",8)
       .attr("y",155)
       .style("font-size", "13px")
-      .style("fill","#c3c9d5")
+      .style("fill","white")
+      //.style("fill","#c3c9d5")
       .style("font-family","Impact")
       .style("font-weight","bold");
            
@@ -355,6 +363,20 @@
  displayCircle(2000);
 
 		</script>
+<div id = "slider"></div>
+<script>
+  var width = 960,
+      height = 100;
+
+      
+  //main svg
+  var svgSlider = d3.select("#slider")
+                  .append("svg")
+                  .attr("width", width)
+                  .attr("height", height)
+                  .style("background-color","white")
+                  .style("padding",20);
+</script>
 
 <body>
 </html>
