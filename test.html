@@ -16,7 +16,7 @@
 		</style>
 	</head>
 	<body>
-		<input id="slider" type="range" min="0" max="100" value="30"/>
+		<input id="slider" type="range" min="1960" max="2014" step = "1" value="1960"/>
 		<form>
 		  <label><input type="radio" name="dataset" value="2000" checked> 2000</label>
 		  <label><input type="radio" name="dataset" value="2005"> 2005</label>
@@ -32,13 +32,7 @@
 		</p>
 
 		<script type="text/javascript">
-			var slider = document.getElementById("slider");
-			slider.oninput = function () {
-				var circle = document.getElementById("c1");
-				circle.setAttribute("r",slider.value);
-				circle.style.stroke = "#f00"
-				circle.style.fill = "#ccc"
-			};
+
 			//Width and height
 			var pieChart = function(year) {
 				
@@ -52,20 +46,22 @@
 					var countryData = data;
 					var yearData = "y" + String(year);
           			var gdpData = "g" + String(year);
-          			console.log(gdpData);
+      
           			var piechartData = [];
-          			var mapData = [];
+          			var quintileData = [];
+          			var mapData = {};
 
           			countryData.forEach(function (data) {
-			           	var yearData = String("y"+year);
-			            if(data[year]!=0) {
+			           	
+			            if(data[yearData]!=0) {
 			            	piechartData.push(data[gdpData]);
-			            	mapData.push({country: data.CountryName, id: data.CountryID, gdp: data[gdpData]})
+			            	quintileData.push(data[gdpData]);
+			            	mapData[data.CountryID] = {name: data.CountryName, id: data.CountryID, gdp: data[gdpData]};
 			            };
 			        });
-          			console.log(piechartData, piechartData.length);
+          			// console.log(mapData, Object.keys(mapData).length);
           		
-          		//sort mapData by gdp, code from http://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-objects
+          		//sort quintileData JSON by gdp, code from http://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-objects
 				var sort_by = function(field, reverse, primer){
 
 				   var key = primer ? 
@@ -79,24 +75,28 @@
 				     } 
 				}
 
-				mapData.sort(sort_by("gdp", false, parseInt));
-				console.log(mapData);		
+				// quintileData.sort(sort_by("gdp", false, parseInt));
+				quintileData.sort();
+				console.log(quintileData);		
 
 				// calculate the 20, 40, 60, 80 percentile, code from http://stackoverflow.com/questions/31572725/calculate-quintiles-deciles-from-an-array-of-numbers
-				var len =  mapData.length;
-				var per20 =  Math.floor(len*.2) - 1;
-				var per40 =  Math.floor(len*.4) - 1;
-				var per60 =  Math.floor(len*.6) - 1;
-				var per80 =  Math.floor(len*.8) - 1;
+				var len =  quintileData.length;
+				var per20 =  quintileData[Math.floor(len*.2) - 1];
+				var per40 =  quintileData[Math.floor(len*.4) - 1];
+				var per60 =  quintileData[Math.floor(len*.6) - 1];
+				var per80 =  quintileData[Math.floor(len*.8) - 1];
 
-				mapData.forEach(function (data) {
-					mapData.color = function() {
+				// console.log("20",per20,"40",per40,"60",per60,"80",per80);
+				quintileData.forEach(function (data) {
+					quintileData.color = function() {
 						var colorchoice = ["#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c"];
 						return color[Math.floor(Math.random()*5)];
 					}
 
 				})
 				
+				var colors = ["#eff3ff","#08519c"];
+        		var colorScale = d3.scale.linear().domain([0, Math.log(Math.max.apply(null, quintileData))]).range(colors);
 
 				var svgwidth = 960;
 				var svgheight = 480;
@@ -118,19 +118,22 @@
 					countries.forEach(function (country) {
 							
 						g.append("path").attr("d", path(country)).style("fill", function(){
-								// var i = 0;
-								// console.log(country.id, "mapData id = ", mapData[i].id)
-								// while (country.id != mapData[i].id) {
-								// 	if (mapData[i].id == country.id) {
-								// 		return mapData[i].color
-								// 	} else {
-								// 		i++
-								// 	}
-									
-								// };
-								// return mapData[i].color;
-								var color = ["#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c"];
-								return color[Math.floor(Math.random()*5)];
+								if (mapData[country.id] == null) {
+									return "ffffff"
+								} else {
+									return colorScale(Math.log(mapData[country.id].gdp));
+									// if (mapData[country.id].gdp <= per20) {
+									// 	return "#eff3ff"
+									// } else if (mapData[country.id].gdp <= per40) {
+									// 	return "#bdd7e7"
+									// } else if (mapData[country.id].gdp <= per60) {
+									// 	return "#6baed6"
+									// } else if (mapData[country.id].gdp <= per80) {
+									// 	return "#3182bd"
+									// } else {
+									// 	return "#08519c"
+									// }
+								}
 							}
 							
 						).style("stroke", "#888");
@@ -183,7 +186,17 @@
 				});
 			};
 
-			pieChart(2014)		
+			pieChart(2014)	
+			// var slider = document.getElementById("slider");
+			// console.log(slider.value);
+			// slider.onchange = function () {
+			// 	pieChart(slider.value)
+			// };
+			// var x = 1960;
+			// setInterval(function() {
+			// 	pieChart(x);
+			// 	x++;
+			// 	console.log(x)			},2000)
 		</script>
 	</body>
 </html>
