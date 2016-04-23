@@ -77,7 +77,11 @@
 	    countries.forEach(function (country){
 		     g.append("path")
           .attr("d", path(country))
-		      .style("fill","#191e28")
+		      .style("fill",function(){
+              
+                var color = ["#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c"];
+                return color[Math.floor(Math.random()*5)];
+              })
 		      .style("stroke","#2a2f3b");
 	    });
 
@@ -276,7 +280,8 @@
              .attr("cx", coords[0])
              .attr("cy", coords[1])
              .attr("r",function (d){ return Scale(data[yearData]);})
-             .style("stroke","#00e6ac")
+             //.style("stroke","#00e6ac")
+             .style("stroke","red")
              .style("fill","none")
              .style("opacity","0.4");
              
@@ -287,8 +292,10 @@
              .attr("cy", coords[1])
              .attr("r",function (d){ return Scale(data[yearData])-0.45;})
              //.style("stroke","#00e6ac")
-             .style("fill","#00e6ac")
-             .style("opacity","0")
+             //.style("fill","#00e6ac")
+             .style("fill","red")
+
+             .style("opacity","0.5")
              .on("mouseover", function (d) {
               d3.select(this).style("opacity","0.4");
               d3.select("#country").text(data.CountryName);
@@ -312,7 +319,7 @@
       });
 //red #ec3255
  }
- displayCircle(2000);
+ displayCircle(2008);
 
 		</script>
 
