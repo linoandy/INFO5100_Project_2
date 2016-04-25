@@ -5,7 +5,7 @@
 <script src="http://d3js.org/topojson.v1.min.js"></script>
 
 <style>body { font-family: "Open Sans"; background-color: #2a2f3b; text-align:center} 
-  div { margin: 30px; }
+  div { margin: 0px; }
 	.axis path { fill:none; stroke: #3f475a; stroke-width:1px;}
 	.axis line{ stroke: #3f475a;}
 	.axis {font-size: .75em;}
@@ -27,6 +27,7 @@
           height = 500;
 
       var projection = d3.geo.mercator();
+      //var projection = d3.geo.equirectangular();
       var path = d3.geo.path().projection(projection);
 	//main svg
       var svg = d3.select("#map")
@@ -317,7 +318,7 @@
             var latitude = data.Latitude;
             var coords = projection([longitude,latitude]);
             svg.append("circle")
-            //.attr("id","c"+i)
+            .attr("id","circle")
              .attr("cx", coords[0])
              .attr("cy", coords[1])
              .attr("r",function (d){ return Scale(data[yearData]);})
@@ -327,7 +328,7 @@
              
 
              svg.append("circle")
-            //.attr("id","c"+i)
+             .attr("id","circle")
              .attr("cx", coords[0])
              .attr("cy", coords[1])
              .attr("r",function (d){ return Scale(data[yearData])-0.45;})
@@ -360,13 +361,13 @@
       });
 //red #ec3255
  }
- displayCircle(2000);
+ 
 
 		</script>
 <div id = "slider"></div>
 <script>
-  var width = 960,
-      height = 100;
+  var sliderWidth = 960,
+      sliderHeight = 50;
 
       
   //main svg
@@ -374,8 +375,48 @@
                   .append("svg")
                   .attr("width", width)
                   .attr("height", height)
-                  .style("background-color","white")
-                  .style("padding",20);
+                  //.style("background-color","white")
+                  .style("padding",10);
+    var scaleYear = d3.scale.linear().domain([1960,2011]).range([5, sliderWidth-5]);
+  var yearArr = []
+  for (var i = 1960; i<2012; i++)
+  {
+     yearArr.push([i]);
+  }
+  yearArr.forEach( function (data){
+    svgSlider.append("circle")
+      .attr("cx", scaleYear(data[0]))
+      .attr("cy", 0)
+             .attr("r",4)
+             .style("fill","#d9d9d9")
+             .on("click",function (d) {
+              d3.select("#click").attr("cx",scaleYear(data[0]));
+              d3.selectAll("#circle").remove();
+              displayCircle(data[0]);
+             });
+    if(data[0]%5==0)
+    {
+      svgSlider.append("text")
+      .text(data[0])
+      .attr("x", scaleYear(data[0]))
+      .attr("y", 24)
+      .style("font-size", "13px")
+      .style("fill","white")
+      //.style("fill","#c3c9d5")
+      .style("font-family","Impact")
+      //.style("font-weight","bold")
+      .style("text-anchor", "middle");
+    }
+  })
+ 
+
+  svgSlider.append("circle")
+      .attr("id", "click")
+      .attr("cx", scaleYear(2011))
+      .attr("cy", 0)
+      .attr("r",9)
+      .style("fill","#d9d9d9");
+  displayCircle(2011);
 </script>
 
 <body>
