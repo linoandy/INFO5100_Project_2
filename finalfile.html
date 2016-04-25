@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Rui Liang</title>
+		<title>Project 2</title>
 		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
 		<style type="text/css">
@@ -23,14 +23,14 @@
 	<body>
 		<div id="title">
       <span style = "font-size:2em; font-weight:100; font-family: 'PT Serif', serif; margin-top:0px; margin-bottom:0px;
-            text-align: left;color:#00e6ac; opacity:0.7;">CO2 Emissions</span>
+            text-align: left;color:#00e6ac; opacity:0.7;">Global Economic Landscape and CO2 Emissions</span>
     </div>
     <div id="map"></div>
 
 		<script type="text/javascript">
 			var pieChart = function(year) {
-				var w = 180;
-				var h = 180;
+				var w = 240;
+				var h = 240;
 
 				d3.json("co2_gdpData.json", function (error, data) {
 					if (error){console.log(error);}
@@ -75,12 +75,12 @@
 				var colors = ["#eff3ff","#08519c"];
         		var colorScale = d3.scale.linear().domain([0, Math.log(Math.max.apply(null, quintileData))]).range(colors);
 
-				var svgwidth = 1920;
-				var svgheight = 1080;
+				var svgwidth = 1300;
+				var svgheight = 800;
 				var svgpadding = 25;
 				var svg = d3.select("#map").append("svg").attr("width", svgwidth).attr("height", svgheight);
 
-				var projection = d3.geo.equirectangular().scale(300).translate([svgwidth/2, svgwidth/2]);
+				var projection = d3.geo.mercator().scale(160).translate([svgwidth/2, svgwidth/2.4]);
 				var path = d3.geo.path().projection(projection);
 		
 
@@ -120,7 +120,8 @@
 				//Create SVG element
 				var svg2 = d3.select("svg")
 							.append("svg")
-              .attr("y", 300)
+              .attr("x", svgwidth/10)
+              .attr("y", svgheight/1.5)
 							.attr("width", w)
 							.attr("height", h);
 				
@@ -140,22 +141,23 @@
 				    })
 				    .attr("d", arc);
 				
-				//Labels
-				// arcs.append("text")
-				//     .attr("transform", function(d) {
-				//     	return "translate(" + arc.centroid(d) + ")";
-				//     })
-				//     .attr("text-anchor", "middle")
-				//     .text(function(d) {
-				//     	return d.value;
-				//     });
+				// Labels
+				arcs.append("text")
+				    .attr("transform", function(d) {
+				    	return "translate(" + arc.centroid(d) + ")";
+				    })
+				    .attr("text-anchor", "middle")
+				    .text(function(d) {
+				    	return d.value;
+				    });
+        
 //Beginning of Yue's code
 			//Use the notes from class to create the map
-		  var width = 960,
-          height = 500;
+		  // var width = 960,
+    //       height = 500;
 
-      var projection = d3.geo.equirectangular();
-      var path = d3.geo.path().projection(projection);
+      // var projection = d3.geo.equirectangular();
+      // var path = d3.geo.path().projection(projection);
 	//main svg
       // var svg = d3.select("#map")
       //             .append("svg")
@@ -399,7 +401,7 @@
           countryData = data;
           var yearData= String("y"+year);
           var capitaData = String("p"+year);
-          var projection = d3.geo.equirectangular();
+          // var projection = d3.geo.equirectangular();
           var path = d3.geo.path().projection(projection);
 
           var Scale = d3.scale.linear().domain([3,9019520]).range([2.5, 120]);
