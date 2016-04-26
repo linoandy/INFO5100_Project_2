@@ -45,6 +45,26 @@
         var projection = d3.geo.mercator();
         //.scale(160).translate([svgwidth/2, svgwidth/2.4]);
         var path = d3.geo.path().projection(projection);
+
+        var g = svg.append("g");
+        var worldObjects;
+
+          d3.json("world-50m.json", function(error, world) {
+          worldObjects = world;
+          if (error) { console.log(error);}
+          var countries = topojson.feature(world, world.objects.countries).features;
+
+          countries.forEach(function (country) {
+              
+            g.append("path")
+            .attr("id", function(){return 'a' + country.id})
+            .attr("d", path(country))
+            .style("stroke", "#20242d")
+            .attr("width", svgwidth).attr("height", svgheight);
+            
+          });
+
+        });
 			var pieChart = function(year) {
 				var w = 190;
 				var h = 190;
@@ -126,9 +146,7 @@
 
 					countries.forEach(function (country) {
 							
-						g.append("path")
-            .attr("id","mappath")
-            .attr("d", path(country)).style("fill", function(){
+						d3.select("#a" + country.id).style("fill", function(){
 								if (mapData[country.id] == null) {
 									return "000000"
 								} else {
@@ -136,9 +154,7 @@
 									//return colorScale(Math.log(mapData[country.id].gdp));
                   return colorScale(mapData[country.id].gdp);
 								}
-							})
-            .style("stroke", "#20242d")
-            .attr("width", svgwidth).attr("height", svgheight);
+							});
 						
 					});
 
