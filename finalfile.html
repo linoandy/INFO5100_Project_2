@@ -86,7 +86,7 @@
                     console.log("yearData: " + data[yearData]);
                     console.log("Data: " + data);
                     console.log("year`: " + yearData);
-			            	piechartData.push(data[gdpData]);
+			            	piechartData.push({"name": String(data.CountryName), "id": data.CountryID, "gdp": data[gdpData]});
 			            	quintileData.push(data[gdpData]);
 			            	mapData[data.CountryID] = {name: data.CountryName, id: data.CountryID, gdp: data[gdpData]};
 			            };
@@ -159,54 +159,79 @@
 					});
 
 				});
-        // Pie chart
-				var outerRadius = w / 2;
-				var innerRadius = 0;
-				var arc = d3.svg.arc()
-								.innerRadius(innerRadius)
-								.outerRadius(outerRadius);
-				
-				var pie = d3.layout.pie();
-				
-				//Easy colors accessible via a 10-step ordinal scale
-				var color = d3.scale.category20c();
+        /// Pie chart, from 162 - 223, thanks to the code from http://bl.ocks.org/Guerino1/2295263
+        var w = 220, //width
+            h = 220,   //height
+            outerRadius = 50,   //radius
+            color = d3.scale.category20c(); //builtin range of colors
 
-				//Create SVG element
-				var svg2 = d3.select("svg")
-							.append("svg")
+          
+          var vis = d3.select("svg")
+            .append("svg") //create the SVG element inside the <body>
+              .data([piechartData]) //associate our data with the document
               .attr("x", 20)
               .attr("y", svgheight/1.5)
-							.attr("width", w)
-							.attr("height", h);
-				
-				//Set up groups
-				var arcs = svg2.selectAll("g.arc")
-							  .data(pie(piechartData))
-							  .enter()
-							  .append("g")
-							  .attr("class", "arc")
-							  .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
-				
-				//Draw arc paths
-				arcs.append("path")
-            .attr("id","arc")
-				    .attr("fill", function(d, i) {
-				    	return color(i);
-				    	// return colorScale(Math.log(piechartData[i]));
-				    })
-				    .attr("d", arc)
-            .style("opacity","0.6");
-				
-				// Labels
-				arcs.append("text")
-            .attr("id", "arctext")
-				    .attr("transform", function(d) {
-				    	return "translate(" + arc.centroid(d) + ")";
-				    })
-				    .attr("text-anchor", "middle")
-				    .text(function(d) {
-				    	return d.value;
-				    });
+              .attr("width", w) //set the width of the canvas
+              .attr("height", h) //set the height of the canvas
+              .append("g") //make a group to hold our pie chart
+                .attr("transform", "translate(" + 1.5*outerRadius + "," + 1.5*outerRadius + ")") // relocate center of pie to 'outerRadius,outerRadius'
+
+          // This will create <path> elements for us using arc data...
+          var arc = d3.svg.arc()
+            .outerRadius(outerRadius);
+
+          var pie = d3.layout.pie() //this will create arc data for us given a list of values
+            .value(function(d) { return d.gdp; }) // Binding each value to the pie
+            .sort( function(d) { return null; } );
+
+          // Select all <g> elements with class slice (there aren't any yet)
+          var arcs = vis.selectAll("g.slice")
+            // Associate the generated pie data (an array of arcs, each having startAngle,
+            // endAngle and value properties) 
+            .data(pie)
+            // This will create <g> elements for every "extra" data element that should be associated
+            // with a selection. The result is creating a <g> for every object in the data array
+            .enter()
+            // Create a group to hold each slice (we will have a <path> and a <text>
+            // element associated with each slice)
+            .append("g")
+            .attr("class", "slice");    //allow us to style things in the slices (like text)
+
+          arcs.append("path")
+            //set the color for each slice to be chosen from the color function defined above
+            .attr("fill", function(d, i) { return color(i); } )
+            //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+            .attr("d", arc)
+            .attr("id", function(d){return 'a' + d.id})
+            .on("mouseover", function (d) {
+                d3.select(this).style("opacity","0.6");
+                // d3.select(this).attr("id").style("opacity","0.6");
+                })
+            .on("mouseout", function () {
+                d3.select(this).style("opacity","1")});
+
+          // Add a legendLabel to each arc slice...
+          arcs.append("text")
+            .attr("transform", function(d) { //set the label's origin to the center of the arc
+              //we have to make sure to set these before calling arc.centroid
+              d.outerRadius = outerRadius + 50; // Set Outer Coordinate
+              d.innerRadius = outerRadius + 45; // Set Inner Coordinate
+              return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor", "middle") //center the text on it's origin
+            .style("fill", "white")
+            .style("font", "bold 12px Arial")
+            .text(function(d, i) {
+                if (piechartData[i].gdp >= 8354800000000) {
+                  return piechartData[i].name; 
+                } 
+            });//get the label from our original data array
+
+          // Computes the angle of an arc, converting from radians to degrees.
+          function angle(d) {
+            var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+            return a > 90 ? a - 180 : a;
+          }
         
 //Beginning of Yue's code
 			//Use the notes from class to create the map
