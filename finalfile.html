@@ -93,24 +93,15 @@
 			        });
           			// console.log(mapData, Object.keys(mapData).length);
           		
-				quintileData.sort();
+				quintileData.sort(function(a, b) {
+          return a - b;
+        });
 				// console.log(quintileData);		
 
 				// calculate the 20, 40, 60, 80 percentile, code from http://stackoverflow.com/questions/31572725/calculate-quintiles-deciles-from-an-array-of-numbers
 				var len =  quintileData.length;
-				var per20 =  quintileData[Math.floor(len*.2) - 1];
-				var per40 =  quintileData[Math.floor(len*.4) - 1];
-				var per60 =  quintileData[Math.floor(len*.6) - 1];
-				var per80 =  quintileData[Math.floor(len*.8) - 1];
+				var per97 =  quintileData[Math.floor(len*.97) - 1];
 
-				// console.log("20",per20,"40",per40,"60",per60,"80",per80);
-				quintileData.forEach(function (data) {
-					quintileData.color = function() {
-						var colorchoice = ["#eff3ff","#bdd7e7","#6baed6","#3182bd","#08519c"];
-						return color[Math.floor(Math.random()*5)];
-					}
-
-				})
 				
 				//var colors = ["#eff3ff","#08519c"];
         var colors = ["#2a2f3c", "#8792ab"];
@@ -210,6 +201,10 @@
             .on("mouseout", function () {
                 d3.select(this).style("opacity","1")});
 
+          arcs.selectAll("path").on("mouseover", function(d,i) {
+            console.log(d.data['id']);
+          })
+
           // Add a legendLabel to each arc slice...
           arcs.append("text")
             .attr("transform", function(d) { //set the label's origin to the center of the arc
@@ -222,7 +217,7 @@
             .style("fill", "white")
             .style("font", "bold 12px Arial")
             .text(function(d, i) {
-                if (piechartData[i].gdp >= 8354800000000) {
+                if (piechartData[i].gdp >= per97) {
                   return piechartData[i].name; 
                 } 
             });//get the label from our original data array
