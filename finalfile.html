@@ -14,10 +14,10 @@
 			}
       body { font-family: "Open Sans"; background-color: #20242d; text-align:center} 
       div { margin: 0px; }
-      .axis path { fill:none; stroke: #3f475a; stroke-width:1px;}
-      .axis line{ stroke: #3f475a;}
+      .axis path { fill:none; stroke: #a6a6a6; stroke-width:1px;}
+      .axis line{ stroke: #a6a6a6;}
       .axis {font-size: .75em;}
-      .axis text{ fill: #3f475a; font-size: .7em;}
+      .axis text{ fill: #a6a6a6; font-size: .7em;}
 		</style>
 	</head>
 	<body>
@@ -274,34 +274,65 @@
              .attr("y", 0)
              .attr("width", svgHoverWidth)
              .attr("height", svgHoverHeight)
-             .style("fill","white")
+             .style("fill","black")
              .style("opacity","0.5");
       
       var svgLineWidth = 260;
-      var svgLineHeight = 160;
+      var svgLineHeight = 130;
       var svgLine = svgHover.append ("svg")
                     .attr("x",0)
-                    .attr("y",135)
+                    .attr("y",165)
                     .attr("width", svgLineWidth)
                     .attr("height", svgLineHeight);
 
-      var xScale = d3.scale.linear().domain([1960,2011]).range([10,svgLineWidth-10]);
+      var xScale = d3.scale.linear().domain([1960,2011]).range([22,svgLineWidth-10]);
 
                    //Making the scale of the graph's y axis
-      var yScale = d3.scale.linear().domain([0, 9019520]).range([svgLineHeight-padding, 0]);
+      var yScale = d3.scale.linear().domain([1, 31]).range([svgLineHeight-padding, 10]);
 
                    //Creating the X & Y axis based on scale
       var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
       .ticks(10).tickFormat(d3.format("d"));
       var yAxis = d3.svg.axis().scale(yScale).orient("left");
-      //svgLine.append("g").attr("class", "axis")
-      //.attr("transform", "translate(10,0)") .call(yAxis);
-      svgLine.append("g").attr("class", "axis")
-          .attr("transform", "translate(0,143)")
-            .call(xAxis);
+      svgLine.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(22,0)") 
+      .call(yAxis);
+      svgLine.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0,110)")
+      .call(xAxis);
+
+      svgLine.append("text")
+      .text("LN()")
+      .attr("x",7)
+      .attr("y",7)
+      .style("font-size","8px")
+      .style("fill", "#a6a6a6");
+
+      svgLine.append("text")
+      .text("Year")
+      .attr("x",235)
+      .attr("y",109)
+      .style("font-size","8px")
+      .style("fill", "#a6a6a6");
+
+      svgLine.append("text")
+      .text("GDP($)")
+      .attr("x",120)
+      .attr("y",13)
+      .style("font-size","9px")
+      .style("fill", "#ff5050");
+
+      svgLine.append("text")
+      .text("TOTAL CO2 EMISSIONS(Kt.)")
+      .attr("x",90)
+      .attr("y",60)
+      .style("font-size","9px")
+      .style("fill", "#00e6ac");
 
 
-
+/* 
       countryData.forEach(function (data){
            var arr = [];
            for (var i = 1960;i<2012; i++){
@@ -319,29 +350,50 @@
            .style("strke-width","1")
            .attr("fill","none");
 
-          });
-
+          });*/
+     
       function line (country) {
+        
            var thisCountry = countryData.filter(function (data) {return data.CountryName == country});
-           //console.log(thisCountry[0].CountryName);
+           
            var arr = [];
+           var arr2 = [];
            for (var i = 1960;i<2012; i++){
             var year = String("y"+i);
+            var yearg = String("g"+i);
             if(thisCountry[0][year]!=0)
 
               arr.push([i, thisCountry[0][year]]);
+            
+           
+           if(thisCountry[0][yearg]!=0)
+            
+
+            arr2.push([i, thisCountry[0][yearg]]);
            }
+           
            //console.log(arr);
+           //console.log(arr2);
            var countryLine = d3.svg.line()
            .x(function (d) {return xScale(d[0])})
-           .y(function (d) {return yScale(d[1])});
+           .y(function (d) {return yScale(Math.log(d[1]))});
            svgLine.append("path")
            .attr("d",countryLine(arr))
-           .attr("stroke","white")
+           .attr("stroke","#00e6ac")
            //.attr("stroke","#c3c9d5")
            .style("strke-width","1")
-           .attr("fill","none")
-           ;
+           .attr("fill","none");
+
+           var countryLine2 = d3.svg.line()
+           .x(function (d) {return xScale(d[0])})
+           .y(function (d) {return yScale(Math.log(d[1]))});
+           svgLine.append("path")
+           .attr("d",countryLine2(arr2))
+           .attr("stroke","#ff5050")
+           //.attr("stroke","#c3c9d5")
+           .style("strke-width","1")
+           .attr("fill","none");
+
           }
 
       line(country);
@@ -372,85 +424,106 @@
       .text("COUNTRY ")
       .attr("x",8)
       .attr("y",20)
-      .style("font-size", "13px")
-      .style("fill","#4a5368")
+      .style("font-size", "10px")
+      .style("fill","#a6a6a6")
 
-      .style("font-family","Impact")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
       .attr("id","country")
       .text("- -")
       .attr("x",8)
-      .attr("y",35)
-      .style("font-size", "13px")
+      .attr("y",33)
+      .style("font-size", "11px")
       .style("fill","white")
       //.style("stroke","black")
       //.style("fill","#c3c9d5")
-      .style("font-family","Impact")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
-      .text("TOTAL EMISSIONS Kt. ")
+      .text("TOTAL CO2 EMISSIONS Kt. ")
       .attr("x",8)
-      .attr("y",60)
-      .style("font-size", "13px")
-      .style("fill","#4a5368")
-      .style("font-family","Impact")
+      .attr("y",50)
+      .style("font-size", "10px")
+      .style("fill","#a6a6a6")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
       .attr("id","total")
       .text("- -")
       .attr("x",8)
-      .attr("y",75)
-      .style("font-size", "13px")
+      .attr("y",63)
+      .style("font-size", "11px")
       .style("fill","white")
       //.style("stroke","black")
       //.style("fill","#c3c9d5")
-      .style("font-family","Impact")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
       .text("PERCENTAGE OF WORLD EMISSIONS")
       .attr("x",8)
-      .attr("y",100)
-      .style("font-size", "13px")
-      .style("fill","#4a5368")
-      .style("font-family","Impact")
+      .attr("y",80)
+      .style("font-size", "10px")
+      .style("fill","#a6a6a6")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
       .attr("id","percentage")
       .text("- -")
       .attr("x",8)
-      .attr("y",115)
-      .style("font-size", "13px")
+      .attr("y",93)
+      .style("font-size", "11px")
       .style("fill","white")
       //.style("stroke","black")
       //.style("fill","#c3c9d5")
-      .style("font-family","Impact")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
       .text("METRIC TONS PER CAPITA")
       .attr("x",8)
-      .attr("y",140)
-      .style("font-size", "13px")
-      .style("fill","#4a5368")
-      .style("font-family","Impact")
+      .attr("y",110)
+      .style("font-size", "10px")
+      .style("fill","#a6a6a6")
+      .style("font-family","Arial")
       .style("font-weight","bold");
 
       svgHover.append("text")
       .attr("id","capita")
       .text("- -")
       .attr("x",8)
-      .attr("y",155)
-      .style("font-size", "13px")
+      .attr("y",123)
+      .style("font-size", "11px")
       .style("fill","white")
       //.style("stroke","black")
       //.style("fill","#c3c9d5")
-      .style("font-family","Impact")
+      .style("font-family","Arial")
+      .style("font-weight","bold");
+
+      svgHover.append("text")
+      .text("GDP")
+      .attr("x",8)
+      .attr("y",140)
+      .style("font-size", "10px")
+      .style("fill","#a6a6a6")
+      .style("font-family","Arial")
+      .style("font-weight","bold");
+
+      svgHover.append("text")
+      .attr("id","gdp")
+      .text("- -")
+      .attr("x",8)
+      .attr("y",153)
+      .style("font-size", "11px")
+      .style("fill","white")
+      //.style("stroke","black")
+      //.style("fill","#c3c9d5")
+      .style("font-family","Arial")
       .style("font-weight","bold");
            
 
@@ -464,34 +537,36 @@
       //Create map
 
     //   d3.json("world-50m.json", function(error, world) {
-	   //     worldObjects = world;
-	   //     if(error){console.log(error);}
+     //     worldObjects = world;
+     //     if(error){console.log(error);}
 
-	   //  var countries = topojson.feature(world, world.objects.countries)
+     //  var countries = topojson.feature(world, world.objects.countries)
     //     .features;
-	   //  countries.forEach(function (country){
-		  //    g.append("path")
+     //  countries.forEach(function (country){
+      //    g.append("path")
     //       .attr("d", path(country))
-		  //     .style("fill","#191e28")
-		  //     .style("stroke","#2a2f3b");
-	   //  });
+      //     .style("fill","#191e28")
+      //     .style("stroke","#2a2f3b");
+     //  });
 
-	   // });
+     // });
 
       
       
       //function to create circles and lines
 
       function displayCircle(year){
-          d3.json("co2Data.json", function (error, data){
-          if (error){console.log(error);}
-          countryData = data;
+         // d3.json("co2_gdpData.json", function (error, data){
+         // if (error){console.log(error);}
+          //countryData = data;
           var yearData= String("y"+year);
           var capitaData = String("p"+year);
+          var gdpData = String("g"+year);
           // var projection = d3.geo.equirectangular();
           var path = d3.geo.path().projection(projection);
 
           var Scale = d3.scale.linear().domain([3,9019520]).range([2.5, 120]);
+          //var Scale = d3.scale.linear().domain([1,16]).range([1, 16]);
           var format = d3.format("0,000");
           d3.select("#world").text(format(Number(countryData[countryData.length-1][yearData])));
           /*for (var i=0; i < countryData.length-1; i++){
@@ -560,6 +635,7 @@
               d3.select("#total").text(format(data[yearData]));
               d3.select("#percentage").text( function (){return d3.format(".3%")(data[yearData]/countryData[countryData.length-1][yearData]);});
               d3.select("#capita").text(format(d3.format(".3f")(data[capitaData])));
+              d3.select("#gdp").text(format(d3.format(".3f")(data[gdpData])));
               
               
 
@@ -574,7 +650,7 @@
           
 
         
-      });
+     // });
 //red #ec3255
  }
  displayCircle(year);
