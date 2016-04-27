@@ -193,6 +193,7 @@
             .attr("fill", function(d, i) { return color(i); } )
             //this creates the actual SVG path using the associated data (pie) with the arc drawing function
             .attr("d", arc)
+            .attr("id", "pieArc")
             .attr("id", function(d){return 'a' + d.id});
 
           // mouseover effect
@@ -207,7 +208,7 @@
 
               countries.forEach(function (country) {
                   
-                d3.select("#a" + d.data['id']).style("opacity","0.6"
+                d3.select("#a" + d.data['id']).style("fill","#ff5050"
                   );
                 
               });
@@ -223,8 +224,15 @@
 
               countries.forEach(function (country) {
                   
-                d3.select("#a" + d.data['id']).style("opacity","1"
-                  );
+                d3.select("#a" + d.data['id']).style("fill", function(){
+                if (mapData[d.data['id']] == null) {
+                  return "000000"
+                } else {
+                  //console.log("country: " + country.id);
+                  //return colorScale(Math.log(mapData[country.id].gdp));
+                  return colorScale(mapData[d.data['id']].gdp);
+                }
+              });
                 
               });
 
@@ -240,6 +248,7 @@
               return "translate(" + arc.centroid(d) + ")";
             })
             .attr("text-anchor", "middle") //center the text on it's origin
+            .attr("id", "arctext")
             .style("fill", "white")
             .style("font", "bold 12px Arial")
             .text(function(d, i) {
@@ -718,7 +727,7 @@
                 //d3.select("#svg").remove();
                 d3.selectAll("#circle").remove();
                 d3.selectAll("#mappath").remove();
-                d3.selectAll("#arc").remove();
+                d3.selectAll("#pieArc").remove();
                 d3.selectAll("#arctext").remove();
                 pieChart(data[0]);
              });
