@@ -83,9 +83,9 @@
           			countryData.forEach(function (data) {
 			           	
 			            if(data[yearData]!=0) {
-                    console.log("yearData: " + data[yearData]);
-                    console.log("Data: " + data);
-                    console.log("year`: " + yearData);
+                    // console.log("yearData: " + data[yearData]);
+                    // console.log("Data: " + data);
+                    // console.log("year`: " + yearData);
 			            	piechartData.push({"name": String(data.CountryName), "id": data.CountryID, "gdp": data[gdpData]});
 			            	quintileData.push(data[gdpData]);
 			            	mapData[data.CountryID] = {name: data.CountryName, id: data.CountryID, gdp: data[gdpData]};
@@ -141,7 +141,7 @@
 								if (mapData[country.id] == null) {
 									return "000000"
 								} else {
-                  console.log("country: " + country.id);
+                  //console.log("country: " + country.id);
 									//return colorScale(Math.log(mapData[country.id].gdp));
                   return colorScale(mapData[country.id].gdp);
 								}
@@ -193,17 +193,43 @@
             .attr("fill", function(d, i) { return color(i); } )
             //this creates the actual SVG path using the associated data (pie) with the arc drawing function
             .attr("d", arc)
-            .attr("id", function(d){return 'a' + d.id})
-            .on("mouseover", function (d) {
-                d3.select(this).style("opacity","0.6");
-                // d3.select(this).attr("id").style("opacity","0.6");
-                })
-            .on("mouseout", function () {
-                d3.select(this).style("opacity","1")});
+            .attr("id", function(d){return 'a' + d.id});
 
+          // mouseover effect
           arcs.selectAll("path").on("mouseover", function(d,i) {
-            console.log(d.data['id']);
-          })
+            // d3.select("a" + d.data['id']).style("opacity","0.6");
+            d3.select(this).style("opacity","0.6");
+
+            d3.json("world-50m.json", function(error, world) {
+              worldObjects = world;
+              if (error) { console.log(error);}
+              var countries = topojson.feature(world, world.objects.countries).features;
+
+              countries.forEach(function (country) {
+                  
+                d3.select("#a" + d.data['id']).style("opacity","0.6"
+                  );
+                
+              });
+
+            });
+            })
+            .on("mouseout", function (d,i) {
+                d3.select(this).style("opacity","1")
+            d3.json("world-50m.json", function(error, world) {
+              worldObjects = world;
+              if (error) { console.log(error);}
+              var countries = topojson.feature(world, world.objects.countries).features;
+
+              countries.forEach(function (country) {
+                  
+                d3.select("#a" + d.data['id']).style("opacity","1"
+                  );
+                
+              });
+
+            });
+              });
 
           // Add a legendLabel to each arc slice...
           arcs.append("text")
