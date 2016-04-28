@@ -65,6 +65,85 @@
           });
 
         });
+
+      //Legend
+      svg.append("circle")
+      .attr("cx", 900)
+      .attr("cy", 480)
+      .attr("r", 30)
+      .style("stroke","#00e6ac")
+      .style("fill","none")
+      .style("opacity","0.6");
+      svg.append("circle")
+      .attr("cx", 900)
+      .attr("cy", 500)
+      .attr("r", 10)
+      .style("stroke","#00e6ac")
+      .style("fill","none")
+      .style("opacity","0.6");
+      svg.append("circle")
+      .attr("cx", 900)
+      .attr("cy", 490)
+      .attr("r", 20)
+      .style("stroke","#00e6ac")
+      .style("fill","none")
+      .style("opacity","0.6");
+      svg.append("circle")
+      .attr("cx", 900)
+      .attr("cy", 508)
+      .attr("r", 2)
+      .style("stroke","#00e6ac")
+      .style("fill","none")
+      .style("opacity","0.6");
+
+      svg.append("line")
+      .attr("x1", 900)
+      .attr("y1", 506)
+      .attr("x2", 860)
+      .attr("y2", 506)
+      .style("stroke", "white")
+      //.style("fill","none")
+      .style("opacity","0.8");
+      svg.append("text")
+      .text("3")
+      .attr("x",853)
+      .attr("y",510)
+      .style("font-size","8px")
+      .style("fill", "white");
+
+       svg.append("line")
+      .attr("x1", 900)
+      .attr("y1", 450)
+      .attr("x2", 860)
+      .attr("y2", 450)
+      .style("stroke", "white")
+      //.style("fill","none")
+      .style("opacity","0.8");
+      svg.append("text")
+      .text("9,019,520")
+      .attr("x",840)
+      .attr("y",454)
+      .style("font-size","8px")
+      .style("fill", "white")
+      .style("text-anchor","middle");
+       svg.append("text")
+      .text("CO2 EMISSIONS Kt.")
+      .attr("x",900)
+      .attr("y",528)
+      .style("font-size","11px")
+      .style("fill", "white")
+      .style("text-anchor","middle")
+      .style("opacity","0.8");
+
+      svg.append("text")
+      .text("(Hover to see details)")
+      .attr("x",900)
+      .attr("y",540)
+      .style("font-size","10px")
+      .style("fill", "white")
+      .style("text-anchor","middle")
+      .style("opacity","0.8");
+
 			var pieChart = function(year) {
 				var w = 190;
 				var h = 190;
@@ -82,7 +161,7 @@
 
           			countryData.forEach(function (data) {
 			           	
-			            if(data[yearData]!=0) {
+			            if(data[gdpData]!=0) {
                     // console.log("yearData: " + data[yearData]);
                     // console.log("Data: " + data);
                     // console.log("year`: " + yearData);
@@ -91,7 +170,8 @@
 			            	mapData[data.CountryID] = {name: data.CountryName, id: data.CountryID, gdp: data[gdpData]};
 			            };
 			        });
-          			// console.log(mapData, Object.keys(mapData).length);
+          			//console.log(mapData, Object.keys(mapData).length);
+                //console.log(mapData);
           		
 				quintileData.sort(function(a, b) {
           return a - b;
@@ -136,10 +216,10 @@
 					var countries = topojson.feature(world, world.objects.countries).features;
 
 					countries.forEach(function (country) {
-							
+							  
 						d3.select("#a" + country.id).style("fill", function(){
 								if (mapData[country.id] == null) {
-									return "000000"
+									return "000000";
 								} else {
                   //console.log("country: " + country.id);
 									//return colorScale(Math.log(mapData[country.id].gdp));
@@ -151,9 +231,9 @@
 
 				});
         /// Pie chart, from 162 - 223, thanks to the code from http://bl.ocks.org/Guerino1/2295263
-        var w = 220, //width
-            h = 220,   //height
-            outerRadius = 50,   //radius
+        var w = 420, //width
+            h = 420,   //height
+            outerRadius = 80,   //radius
             color = d3.scale.category20c(); //builtin range of colors
 
           
@@ -161,7 +241,7 @@
             .append("svg") //create the SVG element inside the <body>
               .data([piechartData]) //associate our data with the document
               .attr("x", 20)
-              .attr("y", svgheight/1.5)
+              .attr("y", svgheight/1.7)
               .attr("width", w) //set the width of the canvas
               .attr("height", h) //set the height of the canvas
               .append("g") //make a group to hold our pie chart
@@ -209,7 +289,8 @@
               countries.forEach(function (country) {
                   
                 d3.select("#a" + d.data['id']).style("fill","#ff5050"
-                  );
+                  )
+                .style("opacity","0.6");
                 
               });
 
@@ -282,6 +363,9 @@
       //             .style("padding-right",50);
                   //.style("padding-bottom",50);
 //svg for line chart
+
+
+      
      
       function hover(x, y, country, r) {
 
@@ -595,7 +679,7 @@
           // var projection = d3.geo.equirectangular();
           var path = d3.geo.path().projection(projection);
 
-          var Scale = d3.scale.linear().domain([3,9019520]).range([2.5, 120]);
+          var Scale = d3.scale.linear().domain([3,9019520]).range([2.5, 80]);
           //var Scale = d3.scale.linear().domain([1,16]).range([1, 16]);
           var format = d3.format("0,000");
           d3.select("#world").text(format(Number(countryData[countryData.length-1][yearData])));
@@ -709,34 +793,66 @@
                   .attr("width", sliderWidth)
                   .attr("height", sliderHeight)
                   //.style("background-color","white")
-                  .style("padding",10);
+                  .style("padding",20);
     var scaleYear = d3.scale.linear().domain([1960,2011]).range([5, sliderWidth-5]);
   var yearArr = []
   for (var i = 1960; i<2012; i++)
   {
      yearArr.push([i]);
   }
+
+  var hoverText = svgSlider.append("text")
+             .text("")
+             //.attr("x", scaleYear(data[0]))
+             //.attr("y", 0)
+             .style("font-size", "12px")
+             .style("fill","white")
+             //.style("fill","#c3c9d5")
+             .style("font-family","Arial")
+             //.style("font-weight","bold")
+             .style("text-anchor", "middle");
   yearArr.forEach( function (data){
-    svgSlider.append("circle")
-      .attr("cx", scaleYear(data[0]))
-      .attr("cy", 0)
-             .attr("r",4)
+    svgSlider.append("rect")
+      .attr("x", scaleYear(data[0])-8)
+      .attr("y", 0)
+      .attr("width",16)
+      .attr("height",16)
+      .style("cursor","pointer")
+      .style("opacity",0.5)
+             //.attr("r",4)
              .style("fill","#d9d9d9")
+             .on("mouseover", function (d) {
+              console.log(d);
+             d3.select(this).style("opacity", 1);
+             hoverText
+             .text(data[0])
+             .attr("x", scaleYear(data[0]))
+             .attr("y", -3);
+
+
+             })
+             .on("mouseout", function (d) {
+             d3.select(this).style("opacity", 0.5);
+             hoverText
+             .text("");
+
+             })
              .on("click",function (d) {
-                d3.select("#click").attr("cx",scaleYear(data[0]));
+                d3.select("#click").attr("x",scaleYear(data[0])-8);
                 //d3.select("#svg").remove();
                 d3.selectAll("#circle").remove();
                 d3.selectAll("#mappath").remove();
-                d3.selectAll("#pieArc").remove();
+                d3.selectAll(".slice").remove();
                 d3.selectAll("#arctext").remove();
                 pieChart(data[0]);
+                d3.select("#yearLable").text(data[0]);
              });
     if(data[0]%5==0)
     {
       svgSlider.append("text")
       .text(data[0])
       .attr("x", scaleYear(data[0]))
-      .attr("y", 24)
+      .attr("y", 32)
       .style("font-size", "13px")
       .style("fill","white")
       //.style("fill","#c3c9d5")
@@ -747,14 +863,32 @@
   })
  
 
-  svgSlider.append("circle")
+  svgSlider.append("rect")
       .attr("id", "click")
-      .attr("cx", scaleYear(2011))
-      .attr("cy", 0)
-      .attr("r",9)
-      .style("fill","#d9d9d9");
+      .attr("x", scaleYear(2011)-8)
+      .attr("y", 0)
+      .attr("width",16)
+      .attr("height",16)
+      //.attr("r",9)
+      .style("fill","#ec3255");
   pieChart(2011);
+
+  svg.append("text")
+  .text("2011")
+  .attr("id", "yearLable")
+  .attr("x", 480)
+      .attr("y", 510)
+      .style("font-size", "28px")
+      .style("fill","white")
+      //.style("fill","#c3c9d5")
+      .style("font-family","Arial Black")
+      //.style("font-weight","bold")
+      .style("text-anchor", "middle");
   //pieChart(1960);
+//var slider = d3.slider().min(0).max(10).ticks(10).showRange(true).value(6);
+// Render the slider in the div
+//d3.select('#slider').call(slider);
+  
 </script>
 
 	</body>
