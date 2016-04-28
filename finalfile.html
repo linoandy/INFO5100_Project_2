@@ -108,7 +108,7 @@
       .text("3")
       .attr("x",853)
       .attr("y",510)
-      .style("font-size","8px")
+      .style("font-size","9px")
       .style("fill", "white");
 
        svg.append("line")
@@ -121,16 +121,16 @@
       .style("opacity","0.8");
       svg.append("text")
       .text("9,019,520")
-      .attr("x",840)
+      .attr("x",838)
       .attr("y",454)
-      .style("font-size","8px")
+      .style("font-size","9px")
       .style("fill", "white")
       .style("text-anchor","middle");
        svg.append("text")
       .text("CO2 EMISSIONS Kt.")
       .attr("x",900)
       .attr("y",528)
-      .style("font-size","11px")
+      .style("font-size","12px")
       .style("fill", "white")
       .style("text-anchor","middle")
       .style("opacity","0.8");
@@ -143,6 +143,84 @@
       .style("fill", "white")
       .style("text-anchor","middle")
       .style("opacity","0.8");
+
+       //Create gradient of color and bars
+      var gradient = svg.append("defs")
+                  .append("linearGradient")
+                  .attr("id", "gradient")
+                  .attr("x1", "0%")
+                  .attr("y1", "0%")
+                  .attr("x2", "100%")
+                  .attr("y2", "0%")
+                  .attr("spreadMethod", "pad");
+
+              gradient.append("stop")
+                  .attr("offset", "0%")
+                  .attr("stop-color", "#2a2f3c")
+                  .attr("stop-opacity", 1);
+
+              gradient.append("stop")
+                  .attr("offset", "100%")
+                  .attr("stop-color", "#8792ab")
+                  .attr("stop-opacity", 1);
+
+              svg.append("rect")
+                  .attr("x", 760)
+                  .attr("y", 540)
+                  .attr("width", 95)
+                  .attr("height", 23)
+                  .attr("transform", "rotate(-90,760,540)")
+                  .style("fill", "url(#gradient)")
+                  .style("stroke","#cccccc");
+            svg.append("line")
+                .attr("x1", 783)
+                .attr("y1", 540)
+                .attr("x2", 743)
+                .attr("y2", 540)
+                .style("stroke", "white")
+                //.style("fill","none")
+                .style("opacity","0.8");
+          svg.append("text")
+                .text(d3.format(".2e")(8824746.24))
+                .attr("x",723)
+                .attr("y",544)
+                .style("font-size","9px")
+                .style("fill", "white")
+                .style("text-anchor","middle");
+
+            svg.append("line")
+                .attr("x1", 783)
+                .attr("y1", 445)
+                .attr("x2", 743)
+                .attr("y2", 445)
+                .style("stroke", "white")
+                //.style("fill","none")
+                .style("opacity","0.8");
+          svg.append("text")
+                .text(d3.format(".2e")(1.7419E+13))
+                .attr("x",721)
+                .attr("y",449)
+                .style("font-size","9px")
+                .style("fill", "white")
+                .style("text-anchor","middle");
+          svg.append("text")
+                .text("GDP")
+                .attr("x",730)
+                .attr("y",494)
+                .style("font-size","12px")
+                .style("fill", "white")
+                .style("text-anchor","middle")
+                .style("opacity","0.8");
+          svg.append("rect")
+                  .attr("x", 690)
+                  .attr("y", 430)
+                  .attr("width", 275)
+                  .attr("height", 120)
+                  .style("fill", "none")
+                  .style("stroke","grey");
+
+
+
 
 			var pieChart = function(year) {
 				var w = 190;
@@ -171,7 +249,7 @@
 			            };
 			        });
           			//console.log(mapData, Object.keys(mapData).length);
-                //console.log(mapData);
+                console.log(mapData);
           		
 				quintileData.sort(function(a, b) {
           return a - b;
@@ -186,8 +264,8 @@
 				//var colors = ["#eff3ff","#08519c"];
         var colors = ["#2a2f3c", "#8792ab"];
 
-        		//var colorScale = d3.scale.linear().domain([0, Math.log(Math.max.apply(null, quintileData))]).range(colors);
-        var colorScale = d3.scale.linear().domain([Math.min.apply(null, quintileData), Math.max.apply(null, quintileData)]).range(colors);
+        		var colorScale = d3.scale.linear().domain([Math.log(Math.min.apply(null, quintileData)), Math.log(Math.max.apply(null, quintileData))]).range(colors);
+        //var colorScale = d3.scale.linear().domain([Math.min.apply(null, quintileData), Math.max.apply(null, quintileData)]).range(colors);
 
 				/*var svgwidth = 960;
 				var svgheight = 500;
@@ -214,20 +292,25 @@
 					worldObjects = world;
 					if (error) { console.log(error);}
 					var countries = topojson.feature(world, world.objects.countries).features;
-
+          
 					countries.forEach(function (country) {
 							  
-						d3.select("#a" + country.id).style("fill", function(){
+						d3.selectAll("#a" + country.id).style("fill", function(){
 								if (mapData[country.id] == null) {
+                  //console.log("country: " + country.id);
 									return "000000";
 								} else {
-                  //console.log("country: " + country.id);
-									//return colorScale(Math.log(mapData[country.id].gdp));
-                  return colorScale(mapData[country.id].gdp);
+                  if(country.id==36)console.log(colorScale(mapData[country.id].gdp));
+									return colorScale(Math.log(mapData[country.id].gdp));
+                  //console.log(country.id);
+                  //console.log(mapData[country.id].gdp);
+                  //return colorScale(mapData[country.id].gdp);
+
 								}
 							});
 						
 					});
+          //d3.select("#a36").style("fill","white");
 
 				});
         /// Pie chart, from 162 - 223, thanks to the code from http://bl.ocks.org/Guerino1/2295263
@@ -288,7 +371,7 @@
 
               countries.forEach(function (country) {
                   
-                d3.select("#a" + d.data['id']).style("fill","#ff5050"
+                d3.selectAll("#a" + d.data['id']).style("fill","#ff5050"
                   )
                 .style("opacity","0.6");
                 
@@ -305,13 +388,13 @@
 
               countries.forEach(function (country) {
                   
-                d3.select("#a" + d.data['id']).style("fill", function(){
+                d3.selectAll("#a" + d.data['id']).style("fill", function(){
                 if (mapData[d.data['id']] == null) {
                   return "000000"
                 } else {
                   //console.log("country: " + country.id);
-                  //return colorScale(Math.log(mapData[country.id].gdp));
-                  return colorScale(mapData[d.data['id']].gdp);
+                  return colorScale(Math.log(mapData[d.data['id']].gdp));
+                  //return colorScale(mapData[d.data['id']].gdp);
                 }
               });
                 
