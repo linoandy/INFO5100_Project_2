@@ -25,6 +25,10 @@
       <span style = "font-size:2em; font-weight:100; font-family: 'PT Serif', serif; margin-top:0px; margin-bottom:0px;
             text-align: left;color:#00e6ac; opacity:0.7;">Global Economic Landscape and CO2 Emissions</span>
     </div>
+
+    <div id="description">
+      <span style = "font-size:1em; font-weight:100; font-family: 'PT Serif', serif; margin-top:0px; margin-bottom:0px;text-align: left;color:white;">This project aims to discover the global economic development and its potential correlation with Carbon Dioxide emission. Data ranges between year 1960 and 2011.</span>
+    </div>
     <div id="map"></div>
 
 		<script type="text/javascript">
@@ -379,10 +383,17 @@
               // });
               vis.append("text")
                 .attr("x", 0)
-                .attr("y", -85)
+                .attr("y", -97)
                 .attr("text-anchor","middle")
                 .attr("id", "pieCountryName")
                 .text(String(d.data["name"]))
+
+              vis.append("text")
+                .attr("x", 0)
+                .attr("y", -85)
+                .attr("text-anchor","middle")
+                .attr("id", "pieCountryName")
+                .text("GDP: " + String(d3.format("0,000")(d.data["gdp"])))
             // });
             })
             .on("mouseout", function (d,i) {
@@ -430,10 +441,17 @@
           // Pie Chart Title
           vis.append("text")
             .attr("x", 0)
-            .attr("y", -100)
+            .attr("y", 100)
             .attr("text-anchor","middle")
             .attr("id", "piechartTitle")
             .text("GDP Percentage by Country")
+
+          vis.append("text")
+            .attr("x", 0)
+            .attr("y", 113)
+            .attr("text-anchor","middle")
+            .attr("id", "piechartTitle")
+            .text("Hover over to see details")
 
           // Computes the angle of an arc, converting from radians to degrees.
           function angle(d) {
