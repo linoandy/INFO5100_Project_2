@@ -823,25 +823,29 @@
   <script type="text/javascript">
     var stopbutton
     var story = function(){
-      var h = 1960;
-
-      var interval = setInterval(function() {
-        //console.log(h);
-        d3.select("#click").attr("x",scaleYear(h)-8);
-        d3.selectAll("#circle").remove();
-        d3.selectAll("#mappath").remove();
-        d3.selectAll(".slice").remove();
-        d3.selectAll("#arctext").remove();
-        d3.selectAll("#piechartTitle").remove();
-        pieChart(h);
-        d3.select("#yearLable").text(h);
-        h++;
-        stopbutton = interval;
-        if (h == 2012) {
-          clearInterval(interval)
-        };
-      }, 1800)
-    };
+      if(stopbutton == null) {
+        var h = 1960;
+        var interval = setInterval(function() {
+          //console.log(h);
+          d3.select("#click").attr("x",scaleYear(h)-8);
+          d3.selectAll("#circle").remove();
+          d3.selectAll("#mappath").remove();
+          d3.selectAll(".slice").remove();
+          d3.selectAll("#arctext").remove();
+          d3.selectAll("#piechartTitle").remove();
+          pieChart(h);
+          d3.select("#yearLable").text(h);
+          h++;
+          stopbutton = interval;
+          if (h == 2012) {
+            clearInterval(interval)
+          };
+        }, 1800)
+      } else {
+        return;
+      };
+      }
+      
     
     var stopStory = function() {
       clearInterval(stopbutton);
