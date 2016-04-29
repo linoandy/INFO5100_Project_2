@@ -181,7 +181,7 @@
                 //.style("fill","none")
                 .style("opacity","0.8");
           svg.append("text")
-                .text(d3.format(".2e")(8824746.24))
+                .text("8.82 M")
                 .attr("x",723)
                 .attr("y",544)
                 .style("font-size","9px")
@@ -197,7 +197,7 @@
                 //.style("fill","none")
                 .style("opacity","0.8");
           svg.append("text")
-                .text(d3.format(".2e")(1.7419E+13))
+                .text("17.4 T")
                 .attr("x",721)
                 .attr("y",449)
                 .style("font-size","9px")
@@ -249,7 +249,7 @@
 			            };
 			        });
           			//console.log(mapData, Object.keys(mapData).length);
-                console.log(mapData);
+                //console.log(mapData);
           		
 				quintileData.sort(function(a, b) {
           return a - b;
@@ -264,7 +264,8 @@
 				//var colors = ["#eff3ff","#08519c"];
         var colors = ["#2a2f3c", "#8792ab"];
 
-        		var colorScale = d3.scale.linear().domain([Math.log(Math.min.apply(null, quintileData)), Math.log(Math.max.apply(null, quintileData))]).range(colors);
+        var colorScale = d3.scale.linear().domain([Math.log(Math.min.apply(null, quintileData)), Math.log(Math.max.apply(null, quintileData))]).range(colors);
+        //var colorScale = d3.scale.linear().domain([Math.min.apply(null, quintileData), Math.max.apply(null, quintileData)]).range(colors);
         //var colorScale = d3.scale.linear().domain([Math.min.apply(null, quintileData), Math.max.apply(null, quintileData)]).range(colors);
 
 				/*var svgwidth = 960;
@@ -302,8 +303,8 @@
 								} else if(mapData[country.id] == null) {
                   return "000000"
                 } else {
-                  if(country.id==36)console.log(colorScale(mapData[country.id].gdp));
-									return colorScale(Math.log(mapData[country.id].gdp));
+                  return colorScale(Math.log(mapData[country.id].gdp));
+                  
                   //console.log(country.id);
                   //console.log(mapData[country.id].gdp);
                   //return colorScale(mapData[country.id].gdp);
@@ -326,7 +327,7 @@
             .append("svg") //create the SVG element inside the <body>
               .data([piechartData]) //associate our data with the document
               .attr("x", 20)
-              .attr("y", svgheight/1.7)
+              .attr("y", svgheight/1.6)
               .attr("width", w) //set the width of the canvas
               .attr("height", h) //set the height of the canvas
               .append("g") //make a group to hold our pie chart
@@ -359,53 +360,50 @@
             //this creates the actual SVG path using the associated data (pie) with the arc drawing function
             .attr("d", arc)
             .attr("id", "pieArc")
-            .attr("id", function(d){return 'a' + d.id});
+            //.attr("id", function(d){return 'b' + d.id});
 
           // mouseover effect
           arcs.selectAll("path").on("mouseover", function(d,i) {
             // d3.select("a" + d.data['id']).style("opacity","0.6");
             d3.select(this).style("opacity","0.6");
 
-            d3.json("world-50m.json", function(error, world) {
-              worldObjects = world;
-              if (error) { console.log(error);}
-              var countries = topojson.feature(world, world.objects.countries).features;
+            // d3.json("world-50m.json", function(error, world) {
+            //   worldObjects = world;
+            //   if (error) { console.log(error);}
+            //   var countries = topojson.feature(world, world.objects.countries).features;
 
-              countries.forEach(function (country) {
+              // countries.forEach(function (country) {
                   
-                d3.selectAll("#a" + d.data['id']).style("fill","#ff5050"
-                  )
-                .style("opacity","0.6");
+                d3.selectAll("#a" + d.data['id']).style("fill","#ff5050");
                 
-              });
+              // });
               vis.append("text")
                 .attr("x", 0)
                 .attr("y", -85)
                 .attr("text-anchor","middle")
                 .attr("id", "pieCountryName")
                 .text(String(d.data["name"]))
-            });
+            // });
             })
             .on("mouseout", function (d,i) {
                 d3.select(this).style("opacity","1")
-                d3.json("world-50m.json", function(error, world) {
-                  worldObjects = world;
-                  if (error) { console.log(error);}
-                  var countries = topojson.feature(world, world.objects.countries).features;
+                // d3.json("world-50m.json", function(error, world) {
+                //   worldObjects = world;
+                //   if (error) { console.log(error);}
+                //   var countries = topojson.feature(world, world.objects.countries).features;
 
-                  countries.forEach(function (country) {
+                //   countries.forEach(function (country) {
                       
                     d3.selectAll("#a" + d.data['id']).style("fill", function(){
                     if (mapData[d.data['id']] == null) {
                       return "000000"
                     } else {
-                      //console.log("country: " + country.id);
                       return colorScale(Math.log(mapData[d.data['id']].gdp));
                       //return colorScale(mapData[d.data['id']].gdp);
                     }
-                  });
+                  // });
                     
-                  });
+                  // });
 
                 });
                 d3.selectAll("#pieCountryName").remove();
@@ -434,6 +432,7 @@
             .attr("x", 0)
             .attr("y", -100)
             .attr("text-anchor","middle")
+            .attr("id", "piechartTitle")
             .text("GDP Percentage by Country")
 
           // Computes the angle of an arc, converting from radians to degrees.
@@ -942,6 +941,7 @@
                 d3.selectAll("#mappath").remove();
                 d3.selectAll(".slice").remove();
                 d3.selectAll("#arctext").remove();
+                d3.selectAll("#piechartTitle").remove();
                 pieChart(data[0]);
                 d3.select("#yearLable").text(data[0]);
              });
